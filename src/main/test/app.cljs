@@ -61,15 +61,17 @@
                             :testlist ["steak" "potatoes" "string beans"]}))
 
 (defn show-list []
-  (let [lists (:lists @app-state)
-        testlist (:testlist @app-state)]
-    [:> rn/View {:style {:margin 10}}
-     ;; (for [{:keys [:title :list]} lists]
-     ;;   [:> rn/View {:style (.-container styles)}
-     ;;    ])
-     (for [item testlist]
-       [:> rn/View {:style (.-listItem styles)}
-        [:> rn/Text {:style (.-list styles)} item]])]))
+  (fn []
+    (let [lists (:lists @app-state)
+          testlist (:testlist @app-state)]
+      [:> rn/View {:style {:margin 10}}
+       ;; (for [{:keys [:title :list]} lists]
+       ;;   [:> rn/View {:style (.-container styles)}
+       ;;    ])
+       (for [item testlist]
+         ^{:key item}
+         [:> rn/View {:style (.-listItem styles)}
+          [:> rn/Text {:style (.-list styles)} item]])])))
 
 
 (defn root []
@@ -80,7 +82,7 @@
     "Hello world!\n"]
 
    [show-list]
-
+   
    ;; [:> rn/TouchableOpacity {:on-press #(swap! app-state assoc-in [:answer] "foobat")}
    ;;  [:> rn/Image {:source splash-img :style {:width 150 :height 150}}]]
 
