@@ -30,6 +30,17 @@
             :textAlign "center"
             :margin 20}
 
+           :list
+           {:fontSize 24
+            :color "white"
+            :textAlign "center"}
+
+           :listItem
+           {:backgroundColor "rgba(1, 1, 255, 0.5)"
+            :textAlign "center"
+            :width 300
+            :margin 5}
+
            :buttonContainer
            {:margin 10
             :flexDirection "row"
@@ -44,17 +55,34 @@
 
 
 (defonce app-state (r/atom {:title "Shopping List"
-                            :answer ""}))
+                            :answer ""
+                            :lists [{:title "Shopping" :list ["foo" "bar" "baz"]}
+                                    {:title "Dinner" :list ["steak" "potatoes" "string beans"]}]
+                            :testlist ["steak" "potatoes" "string beans"]}))
+
+(defn show-list []
+  (let [lists (:lists @app-state)
+        testlist (:testlist @app-state)]
+    [:> rn/View {:style {:margin 10}}
+     ;; (for [{:keys [:title :list]} lists]
+     ;;   [:> rn/View {:style (.-container styles)}
+     ;;    ])
+     (for [item testlist]
+       [:> rn/View {:style (.-listItem styles)}
+        [:> rn/Text {:style (.-list styles)} item]])]))
 
 
 (defn root []
   [:> rn/View {:style (.-container styles)}
+
    [:> rn/Text {:style (.-title styles)
                 :on-press #(swap! app-state update-in [:answer] inc)}
     "Hello world!\n"]
 
-   [:> rn/TouchableOpacity {:on-press #(swap! app-state assoc-in [:answer] "foobat")}
-    [:> rn/Image {:source splash-img :style {:width 150 :height 150}}]]
+   [show-list]
+
+   ;; [:> rn/TouchableOpacity {:on-press #(swap! app-state assoc-in [:answer] "foobat")}
+   ;;  [:> rn/Image {:source splash-img :style {:width 150 :height 150}}]]
 
    [:> rn/Text {:style (.-body styles)}
     "\nShould this become a shopping list app?"]
