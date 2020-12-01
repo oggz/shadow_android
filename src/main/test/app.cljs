@@ -28,7 +28,7 @@
            {:fontSize 24
             :color "blue"
             :textAlign "center"
-            :margin 10}
+            :margin 20}
 
            :buttonContainer
            {:margin 10
@@ -57,10 +57,7 @@
     [:> rn/Image {:source splash-img :style {:width 150 :height 150}}]]
 
    [:> rn/Text {:style (.-body styles)}
-    "\nThis looks like the beginnings of great app!"]
-
-   [:> rn/Text {:style (.-body styles)}
-    "What do you think?"]
+    "\nShould this become a shopping list app?"]
 
    [:> rn/View {:style (.-buttonContainer styles)}
     [:> rn/View {:style (.-mybutton styles)}
