@@ -1,14 +1,16 @@
 (ns test.app
   (:require
-    [shadow.react-native :refer (render-root)]
-    ["react-native" :as rn]
-    ["react" :as react]
-    [reagent.core :as r]
-    ))
+   [shadow.react-native :refer (render-root)]
+   ["react-native" :as rn]
+   ["react" :as react]
+   [reagent.core :as r]))
 
 ;; must use defonce and must refresh full app so metro can fill these in
 ;; at live-reload time `require` does not exist and will cause errors
 ;; must use path relative to :output-dir
+
+
+;; (.addListener rn/Keyboard "keyboardDidShow" #(js/alert "foobat"))
 
 (defonce splash-img (js/require "../assets/shadow-cljs.png"))
 
@@ -53,7 +55,6 @@
           (clj->js)
           (rn/StyleSheet.create)))
 
-
 (defonce app-state (r/atom {:title "Shopping List"
                             :answer ""
                             :lists [{:title "Shopping" :list ["foo" "bar" "baz"]}
@@ -73,33 +74,42 @@
          [:> rn/View {:style (.-listItem styles)}
           [:> rn/Text {:style (.-list styles)} item]])])))
 
+(defn input []
+  (fn []
+    (let [answer (:answer @app-state)]
+      [:> rn/View {:style {:flex 1 :width "90%" :alignItems "center"}}
+       [:> rn/TextInput {:style {:backgroundColor "black" :color "white" :height 50 :width "90%"}
+                         :default-value answer
+                         :on-change-text #(swap! app-state assoc :answer %)}]])))
 
 (defn root []
-  [:> rn/View {:style (.-container styles)}
-
-   [:> rn/Text {:style (.-title styles)
+  [:> rn/KeyboardAvoidingView {:behavior "padding"
+                               :style    {:flex 1
+                                          :backgroundColor "#fff"
+                                          :alignItems      "center"
+                                          :justifyContent  "center"}}
+   [:> rn/View {:style {:height 30}}]
+   [:> rn/Text {:style    {:fontSize 36
+                           :color    "blue"}
                 :on-press #(swap! app-state update-in [:answer] inc)}
     "Hello world!\n"]
-
-   [show-list]
-   
+   [input]
+   ;; [show-list]
    ;; [:> rn/TouchableOpacity {:on-press #(swap! app-state assoc-in [:answer] "foobat")}
    ;;  [:> rn/Image {:source splash-img :style {:width 150 :height 150}}]]
-
    [:> rn/Text {:style (.-body styles)}
     "\nShould this become a shopping list app?"]
-
    [:> rn/View {:style (.-buttonContainer styles)}
     [:> rn/View {:style (.-mybutton styles)}
-     [:> rn/Button {:title "Yes"
+     [:> rn/Button {:title    "Yes"
                     :on-press #(swap! app-state assoc-in [:answer] "yes")}]]
     [:> rn/View {:style (.-mybutton styles)}
-     [:> rn/Button {:title "No"
+     [:> rn/Button {:title    "No"
                     :on-press #(swap! app-state assoc-in [:answer] "no")}]]]
-
    [:> rn/Text {:style (.-body styles)}
-    "Answer: " (:answer @app-state)]])
-   
+    "Answer: " (:answer @app-state)]
+   [input]])
+
 (defn start
   {:dev/after-load true}
   []
